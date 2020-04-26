@@ -1,6 +1,7 @@
 {
-  "name": "brave-js",
-  "private": true,
+  "name": "@brave-js/core",
+  "version": "0.1.0",
+  "private": false,
   "devDependencies": {
     "lerna": "^3.20.2"
   },
@@ -17,14 +18,12 @@
   "authors": [
     "Sankar Ganesh <sankar.ganesh@freshworks.com>"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sankar-ganesh/brave-js.git"
-  },
+  "repository": "https://github.com/sankar-ganesh/brave-js",
   "license": "MIT",
   "scripts": {
     "test": "lerna run test --no-private --stream --concurrency 1",
     "build": "lerna run build --parallel --no-private",
-    "lint": "lerna run lint"
+    "lint": "lerna run lint",
+    "lerna:publish": "lerna publish from-git --yes"
   }
 }

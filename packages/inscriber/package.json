@@ -1,8 +1,9 @@
 {
   "name": "@brave-js/inscriber",
-  "version": "0.1.0",
+  "version": "0.0.8",
   "description": "Class with property dependencies",
   "main": "inscriber.js",
+  "private": false,
   "scripts": {
     "build": "webpack --mode production",
     "develop": "webpack --mode development --watch",
@@ -15,10 +16,7 @@
   "pre-commit": [
     "lint-staged"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sankar-ganesh/brave-js.git"
-  },
+  "repository": "https://github.com/sankar-ganesh/brave-js",
   "keywords": [
     "inscriber",
     "js inscriber",
@@ -46,5 +44,9 @@
     "sinon": "^9.0.2",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/sankar-ganesh/brave-js"
 }
