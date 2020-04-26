@@ -1,0 +1,14 @@
+language: node_js
+
+node_js:
+ - "node"
+
+install:
+  - npm install -g codecov
+
+before_install:
+  - yarn
+  - pip install --user codecov
+
+after_success:
+  - codecov --file coverage/lcov.info --disable search

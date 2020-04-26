@@ -1,0 +1,30 @@
+{
+  "name": "brave-js",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^3.20.2"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "npmClient": "yarn",
+  "useWorkspaces": true,
+  "keywords": [
+    "brave",
+    "brave-js",
+    "brave js"
+  ],
+  "authors": [
+    "Sankar Ganesh <sankar.ganesh@freshworks.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sankar-ganesh/brave-js.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "test": "lerna run test --no-private --stream --concurrency 1",
+    "build": "lerna run build --parallel --no-private",
+    "lint": "lerna run lint"
+  }
+}

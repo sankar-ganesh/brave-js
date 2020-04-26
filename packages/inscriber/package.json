@@ -1,0 +1,50 @@
+{
+  "name": "@brave-js/inscriber",
+  "version": "0.1.0",
+  "description": "Class with property dependencies",
+  "main": "inscriber.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "develop": "webpack --mode development --watch",
+    "lint": "eslint . test --fix --ignore-path=.gitignore",
+    "test": "nyc --reporter=lcov --reporter=text mocha --require @babel/register"
+  },
+  "lint-staged": {
+    "*.js": "eslint . test --fix --ignore-path=.gitignore"
+  },
+  "pre-commit": [
+    "lint-staged"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sankar-ganesh/brave-js.git"
+  },
+  "keywords": [
+    "inscriber",
+    "js inscriber",
+    "class inscriber",
+    "js class inscriber"
+  ],
+  "authors": [
+    "Sankar Ganesh <sankar.ganesh@freshworks.com>"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/plugin-transform-arrow-functions": "^7.8.3",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/register": "^7.9.0",
+    "babel-loader": "^8.1.0",
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "lint-staged": "^10.1.7",
+    "mocha": "^7.1.2",
+    "nyc": "^15.0.1",
+    "pre-commit": "^1.2.2",
+    "sinon": "^9.0.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  }
+}
