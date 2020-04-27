@@ -14,7 +14,8 @@
     "*.js": "eslint . test --fix --ignore-path=.gitignore"
   },
   "pre-commit": [
-    "lint-staged"
+    "lint-staged",
+    "yarn build"
   ],
   "repository": "https://github.com/sankar-ganesh/brave-js",
   "keywords": [
@@ -32,6 +33,7 @@
     "@babel/core": "^7.9.0",
     "@babel/node": "^7.8.7",
     "@babel/plugin-transform-arrow-functions": "^7.8.3",
+    "@babel/plugin-transform-classes": "^7.9.5",
     "@babel/preset-env": "^7.9.5",
     "@babel/register": "^7.9.0",
     "babel-loader": "^8.1.0",

@@ -10,6 +10,7 @@
           {
               "spec": true
           }
-      ]
+      ],
+      ["@babel/plugin-transform-classes"]
   ]
 }
