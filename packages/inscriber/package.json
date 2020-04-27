@@ -1,6 +1,6 @@
 {
   "name": "@brave-js/inscriber",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Class with property dependencies",
   "main": "inscriber.js",
   "publishConfig": {
