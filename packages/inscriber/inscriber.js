@@ -21,6 +21,13 @@ class Inscriber {
     });
   }
 
+  _resetBindings(name, properties) {
+    properties.forEach(property => {
+      let bindArray = this._bindings[property];
+      bindArray.splice(bindArray.indexOf(name), 1);
+    });
+  }
+
   _setupBindings(name) {
     let data = this._datasets[name],
         properties = data && data.properties;
@@ -45,13 +52,10 @@ class Inscriber {
   _bindProperty(name, property) {
     var that = this;
   
-    let data = this._datasets[name],
-        binding = this._bindings[property];
+    let propertyBinding = this._bindings[property];
     
-    if (binding) {
-      if (!binding.includes(name)) {
-        binding.push(name);
-      }
+    if (propertyBinding) {
+      propertyBinding.push(name);
     } else {
       let propValue = this[property];
       this._bindings[property] = [name];
@@ -61,7 +65,7 @@ class Inscriber {
         },
         set: function(value) {
             propValue = value;
-            that.toggle(name);
+            that.toggle(property);
         }
       }); 
     }
@@ -79,26 +83,30 @@ class Inscriber {
     }
 
     let nameTaken = this._datasets[name];
-    // Call dataset always to keep properties and binding up-to-date
-    this._setupDatasets(name, properties, method);
-    
-    // Define property only when name is not taken
-    if (!nameTaken) {
+    if (nameTaken) {
+      this._resetBindings(name, nameTaken.properties);
+    } else {
       this._defineProperty(name);
     }
+
+    // Call dataset always to keep properties and binding up-to-date
+    this._setupDatasets(name, properties, method, nameTaken);
 
     // Call bindings always to keep properties and bindings up-to-date
     this._setupBindings(name);
   }
   
-  toggle(name) {
-    let data = this._datasets[name];
-    data.changed = data.changed || true;
+  toggle(property) {
+    let bindings = this._bindings[property];
+    bindings.forEach(binding => {
+      let data = this._datasets[binding];
+      data.changed = data.changed || true;
+    });
   }
   
-  reset(name) {
+  reset(name, flag = false) {
     let data = this._datasets[name];
-    data.changed = data.changed && false;
+    data.changed = data.changed && flag;
   }
 }
 

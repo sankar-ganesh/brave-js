@@ -79,7 +79,7 @@ describe('Inscriber Test', function() {
     assert.ok(compute.called);
     compute.resetHistory();
     
-    inscriber.toggle('fullName');
+    inscriber.toggle('firstName');
     fullName = inscriber.fullName;
     assert.ok(compute.called);
   });
@@ -93,12 +93,41 @@ describe('Inscriber Test', function() {
     assert.ok(compute.called);
     compute.resetHistory();
     
+    inscriber.firstName = 'Tom';
     inscriber.reset('fullName');
     fullName = inscriber.fullName;
     assert.notOk(compute.called);
+    compute.resetHistory();
+    
+    inscriber.lastName = 'John';
+    inscriber.reset('fullName', true);
+    fullName = inscriber.fullName;
+    assert.ok(compute.called);
   });
 
-  it('check inscriber compute allows overriding', function() {
+  it('check inscriber compute allows removal of binding properties', function() {
+    let compute = sinon.fake();
+    let inscriber = new Inscriber();
+    inscriber.compute('fullName', ['firstName', 'lastName'], compute);
+
+    let fullName = inscriber.fullName;
+    assert.ok(compute.called);
+    compute.resetHistory();
+    
+    inscriber.compute('fullName', ['lastName'], compute);
+    fullName = inscriber.fullName;
+    assert.ok(compute.called);
+    compute.resetHistory();
+    inscriber.firstName = 'John';
+    fullName = inscriber.fullName;
+    assert.notOk(compute.called);
+    compute.resetHistory();
+    inscriber.lastName = 'John';
+    fullName = inscriber.fullName;
+    assert.ok(compute.called);
+  });
+
+  it('check inscriber compute callback / method allows overriding', function() {
     let inscriber = new Inscriber();
     inscriber.firstName = 'Sankar';
     inscriber.lastName = 'Ganesh';
@@ -115,7 +144,7 @@ describe('Inscriber Test', function() {
     assert.equal(inscriber.fullName, 'Mr. Sankar Ganesh');
   });
 
-  it('check inscriber compute allows overriding properties', function() {
+  it('check inscriber compute allows updating binding properties', function() {
     let inscriber = new Inscriber();
     inscriber.firstName = 'Sankar';
     inscriber.lastName = 'Ganesh';
@@ -133,7 +162,7 @@ describe('Inscriber Test', function() {
     assert.equal(inscriber.fullName, 'Mr. Sankar Ganesh MSc');
   });
 
-  it('check inscriber compute allows multiple property bindings', function() {
+  it('check inscriber compute allows multiple binding properties', function() {
     let inscriber = new Inscriber();
     inscriber.firstName = 'Sankar';
     inscriber.lastName = 'Ganesh';

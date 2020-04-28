@@ -6,11 +6,21 @@ A Simple Javascript Class which is carved out with some features to offer the pr
 
 ## Design
 
-- `@brave-js/inscriber` distinct javascript class
+- `Inscriber` a distinct javascript class
 
-## API
+## Inscriber Class
 
-The scope of the API works only within the current object / instance of the class
+- The scope of the API works only within the current object / instance of the class
+
+- Allows addition & deletion to property binding list
+
+- Property binding change event is delegated via the setters / getters
+
+- Allows deletion of computed property
+
+- Computed Property value is cached. The callback is never called unless the cache is reset
+
+- Last but not least, you can force enable / disable cache. Default is enable cache
 
 ### compute
 
@@ -59,3 +69,26 @@ person.lastName = 'Rob';
 person.fullName // => Prints `Mr Rob`
 ```
 
+### toggle
+
+Disables the cache for all computed property of the binding property. Will be useful to reset cache at any point of time.
+
+**Parameters**
+
+- `property` name of the bindings
+
+## Usage
+
+- `firstName`, `lastName`, `street`, `city` are binding properties
+
+### reset
+
+Enables the cache for the computed property. Will be useful to read the old value & new value after a change
+
+**Parameters**
+
+- `name` name of the computed property
+
+## Usage
+
+- `fullName`, `address` are computed property for binding properties `firstName`, `lastName`, `street`, `city`
