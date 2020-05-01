@@ -8,6 +8,7 @@ describe('Inscriber Test', function() {
     let inscriber = new Inscriber();
     assert.equal(typeof inscriber, 'object');
     assert.equal(typeof inscriber.compute, 'function');
+    assert.equal(typeof inscriber.destruct, 'function');
     assert.equal(typeof inscriber.toggle, 'function');
     assert.equal(typeof inscriber.reset, 'function');
   });
@@ -178,5 +179,90 @@ describe('Inscriber Test', function() {
     inscriber.compute('address', ['firstName', 'lastName', 'street'], computeAddress);
     assert.equal(inscriber.fullName, 'Sankar Ganesh');
     assert.equal(inscriber.address, 'Sankar Ganesh bull street, london');
+  });
+
+  it('check inscriber destruct method', function() {
+    let inscriber = new Inscriber();
+    inscriber.firstName = 'Sankar';
+    inscriber.lastName = 'Ganesh';
+    let compute = function() {
+      return `${this.firstName} ${this.lastName}`;
+    };
+    inscriber.compute('fullName', ['firstName', 'lastName'], compute);
+    assert.equal(inscriber.fullName, 'Sankar Ganesh');
+
+    inscriber.destruct('fullName');
+    assert.equal(inscriber.firstName, 'Sankar');
+    assert.equal(inscriber.lastName, 'Ganesh');
+    assert.equal(inscriber.fullName, 'Sankar Ganesh');
+
+    inscriber.firstName = 'John';
+    inscriber.lastName = 'Doe';
+    assert.equal(inscriber.firstName, 'John');
+    assert.equal(inscriber.lastName, 'Doe');
+    assert.equal(inscriber.fullName, 'Sankar Ganesh');
+  });
+
+  it('check inscriber allows recomputing', function() {
+    let inscriber = new Inscriber();
+    inscriber.firstName = 'Sankar';
+    inscriber.lastName = 'Ganesh';
+    let compute = function() {
+      return `${this.firstName} ${this.lastName}`;
+    };
+    inscriber.compute('fullName', ['firstName', 'lastName'], compute);
+    assert.equal(inscriber.fullName, 'Sankar Ganesh');
+
+    inscriber.destruct('fullName');
+    assert.equal(inscriber.firstName, 'Sankar');
+    assert.equal(inscriber.lastName, 'Ganesh');
+    assert.equal(inscriber.fullName, 'Sankar Ganesh');
+
+    inscriber.firstName = 'John';
+    inscriber.lastName = 'Doe';
+    inscriber.compute('fullName', ['firstName', 'lastName'], compute);
+    assert.equal(inscriber.firstName, 'John');
+    assert.equal(inscriber.lastName, 'Doe');
+    assert.equal(inscriber.fullName, 'John Doe');
+  });
+
+  it('check inscriber destruct retains property definition when there are multiple binding properties', function() {
+    let inscriber = new Inscriber();
+    inscriber.firstName = 'Sankar';
+    inscriber.lastName = 'Ganesh';
+    let compute = function() {
+      return `${this.firstName} ${this.lastName}`;
+    };
+    inscriber.street = 'bull street, london';
+    let computeAddress = function() {
+      return `${this.firstName} ${this.lastName} ${this.street}`;
+    };
+
+    inscriber.compute('fullName', ['firstName', 'lastName'], compute);
+    inscriber.compute('address', ['firstName', 'lastName', 'street'], computeAddress);
+    assert.equal(inscriber.fullName, 'Sankar Ganesh');
+    assert.equal(inscriber.address, 'Sankar Ganesh bull street, london');
+
+    inscriber.destruct('fullName');
+    assert.equal(inscriber.fullName, 'Sankar Ganesh');
+    assert.equal(inscriber.address, 'Sankar Ganesh bull street, london');
+
+    inscriber.firstName = 'John';
+    inscriber.lastName = 'Doe';
+    assert.equal(inscriber.fullName, 'Sankar Ganesh');
+    assert.equal(inscriber.address, 'John Doe bull street, london');
+  });
+
+  it('check inscriber destruct restricts deletion', function() {
+    let compute = sinon.fake();
+    let inscriber = new Inscriber();
+    inscriber.compute('fullName', ['firstName', 'lastName'], compute);
+
+    let fullName = inscriber.fullName;
+    assert.ok(compute.called);
+    compute.resetHistory();
+
+    inscriber.destruct('fullname'); // Incorrect name
+    assert.notOk(compute.called);
   });
 });

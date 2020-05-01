@@ -4,6 +4,10 @@ A Simple Javascript Class which is carved out with some features to offer the pr
 
 [![NPM version](https://img.shields.io/npm/v/@brave-js/inscriber.svg)](https://www.npmjs.com/package/@brave-js/inscriber) [![gzip size](https://img.badgesize.io/https://unpkg.com/@brave-js/inscriber/dist/inscriber.js?compression=gzip)](https://www.npmjs.com/package/@brave-js/inscriber)
 
+## Installation
+
+* `yarn add @brave-js/inscriber`
+
 ## Design
 
 - `Inscriber` a distinct javascript class
@@ -34,7 +38,7 @@ Enables the usage of computed property within the current object / instance of t
 
 - `method` callback function which to calculate the value of the computed property
 
-## Usage
+### Usage
 ```javascript
 import Inscriber from '@brave-js/inscriber';
 
@@ -69,6 +73,52 @@ person.lastName = 'Rob';
 person.fullName // => Prints `Mr Rob`
 ```
 
+### destruct
+
+Destructs the computed property within the current object / instance of the class
+
+**Parameters**
+
+- `name` name of the computed property
+
+### Usage
+```javascript
+import Inscriber from '@brave-js/inscriber';
+
+// Create the `Person` Class extending the `Inscriber` Class
+class Person extends Inscriber {
+    constructor(obj) {
+        super();
+        this.firstName = obj.firstName;
+        this.lastName = obj.lastName;
+        return this;
+    }
+}
+
+// Instantiate the `Person` Object
+var person = new Person({
+    firstName: 'John',
+    lastName: 'Doe'
+});
+
+// Add Computed Property `fullName` to the person object
+person.compute('fullName', ['firstName', 'lastName'], function() {
+    return `${this.firstName} ${this.lastName}`;
+});
+
+// Access Computed Property `fullName` from the person object
+person.fullName // => Prints `John Doe`
+
+// Destructing the Computed Property will retain the value but no longer linked to the bindings
+person.destruct('fullName');
+
+// Now any change to the properties `firstName` & `lastName` will not be derived in `fullName`
+person.firstName = 'Mr';
+person.lastName = 'Rob';
+
+person.fullName // => Prints `John Doe`
+```
+
 ### toggle
 
 Disables the cache for all computed property of the binding property. Will be useful to reset cache at any point of time.
@@ -77,7 +127,7 @@ Disables the cache for all computed property of the binding property. Will be us
 
 - `property` name of the bindings
 
-## Usage
+### Usage
 
 - `firstName`, `lastName`, `street`, `city` are binding properties
 
@@ -89,6 +139,6 @@ Enables the cache for the computed property. Will be useful to read the old valu
 
 - `name` name of the computed property
 
-## Usage
+### Usage
 
 - `fullName`, `address` are computed property for binding properties `firstName`, `lastName`, `street`, `city`
