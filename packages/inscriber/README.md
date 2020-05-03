@@ -119,6 +119,42 @@ person.lastName = 'Rob';
 person.fullName // => Prints `John Doe`
 ```
 
+### set
+
+Sets the value for the property in the XPATH within the current object / instance of the class
+
+**Parameters**
+
+- `xpath` XPATH of the property
+
+- `value` value for the property
+
+### Usage
+```javascript
+import Inscriber from '@brave-js/inscriber';
+Inscriber.name = {};
+
+Inscriber.set('name.firstName', 'Mr');
+Inscriber.set('name.lastName', 'Rob');
+```
+
+### get
+
+Retrieve the value for the property in the XPATH within the current object / instance of the class
+
+**Parameters**
+
+- `xpath` XPATH of the property
+
+### Usage
+```javascript
+import Inscriber from '@brave-js/inscriber';
+Inscriber.name = {firstName : 'John', lastName: 'Doe'};
+
+Inscriber.get('name.firstName'); // Returns `John`
+Inscriber.get('name.lastName'); // Returns `Doe`
+```
+
 ### toggle
 
 Disables the cache for all computed property of the binding property. Will be useful to reset cache at any point of time.

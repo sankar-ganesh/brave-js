@@ -12,8 +12,76 @@ class Inscriber {
    *  @return {Object} instance of the class `Inscriber`
    */
   constructor() {
+    this._datapaths = {};
     this._datasets = {};
     this._bindings = {};
+  }
+
+  /*
+   *  @private @method _convertXPathToObject
+   *  @description Converts the XPATH to Object
+   * 
+   *  @param {string} xpath       XPATH of the object
+   *  @return {Object} retVal     {obj, parent, leaf}
+   */
+  _convertXPathToObject(xpath) {
+    let retVal = {
+      source: null,
+      parent: null,
+      leaf: null
+    };
+
+    if (this._datapaths[xpath]) {
+      return this._datapaths[xpath];
+    }
+
+    let lastIndex = xpath && xpath.lastIndexOf('.'),
+        parent = (lastIndex !== -1)? xpath && xpath.slice(0, lastIndex) : null,
+        leaf = xpath && xpath.slice(lastIndex+1);
+    
+    if (parent) {
+      parent = parent.split('.');
+      retVal.parent = parent;
+
+      parent.map((path, index) => {
+        if (retVal.source === null) {
+          retVal.source = this[path];
+          if (retVal.source === void 0) {
+            throw new Error(`${path} not found`);
+          }
+        } else {
+          retVal.source = retVal.source && retVal.source[path] || void 0;
+          if (retVal.source === void 0) {
+            throw new Error(`${path} not found`);
+          }
+        }
+      });
+    }
+    if (leaf) {
+      retVal.leaf = leaf;
+      if (parent === null) {
+        retVal.source = this;
+      }
+    }
+    if (retVal.parent === null && retVal.leaf === null) {
+      throw new Error('XPATH not found');
+    }
+    return retVal;
+  }
+
+  /*
+   *  @private @method _checkForDataPaths
+   *  @description Identified the datapaths for the xpaths
+   * 
+   *  @param {string} name        Name of the computed property
+   *  @param {Array} properties   Array of dependent properties
+   *  @return void 0
+   */
+  _checkForDataPaths(name, properties) {
+    this._datapaths[name] = this._convertXPathToObject(name);
+    properties.forEach(property => {
+      this._datapaths[property] = this._convertXPathToObject(property);
+    });
   }
 
   /*
@@ -53,7 +121,8 @@ class Inscriber {
    */
   _defineProperty(name) {
     var that = this;
-    Object.defineProperty(this, name, {
+    var datapath = this._datapaths[name];
+    Object.defineProperty(datapath.source, datapath.leaf, {
       configurable: true,
       get: function() {
         return that._getValue(name);
@@ -69,9 +138,11 @@ class Inscriber {
    *  @return void 0
    */
   _redefineProperty(name) {
-    var propvalue = this[name];
-    delete this[name];
-    this[name] = propvalue;
+    let datapath = this._datapaths[name],
+        dataObj = datapath.source[datapath.leaf],
+        propvalue = dataObj;
+    delete datapath.source[datapath.leaf];
+    datapath.source[datapath.leaf] = propvalue;
   }
 
   /*
@@ -147,9 +218,11 @@ class Inscriber {
     if (propertyBinding) {
       propertyBinding.push(name);
     } else {
-      let propValue = this[property];
+      let datapath = this._datapaths[property],
+          dataObj = datapath.source[datapath.leaf];
+      let propValue = dataObj;
       this._bindings[property] = [name];
-      Object.defineProperty(this, property, {
+      Object.defineProperty(datapath.source, datapath.leaf, {
         configurable: true,
         get: function() {
           return propValue;
@@ -182,6 +255,9 @@ class Inscriber {
       return;
     }
 
+    // If there xpaths identifies the datapaths
+    this._checkForDataPaths(name, properties);
+
     let nameTaken = this._datasets[name];
     if (nameTaken) {
       this._resetBindings(name, nameTaken.properties);
@@ -210,6 +286,33 @@ class Inscriber {
       this._redefineProperty(name);
       this._resetDatasets(name);
     }
+  }
+
+  /*
+   *  @method set
+   *  @description Sets the value for property XPATH
+   * 
+   *  @param {string} xpath         XPATH of the property
+   *  @param {Object} value         Value of the property
+   *  @return void 0
+   */
+  set(xpath, value) {
+    let datapath = this._convertXPathToObject(xpath);
+    if (datapath.source && datapath.leaf) {
+      datapath.source[datapath.leaf] = value;
+    }
+  }
+
+  /*
+   *  @method get
+   *  @description Gets the value for property XPATH
+   * 
+   *  @param {string} xpath         XPATH of the property
+   *  @return void 0
+   */
+  get(xpath) {
+    let datapath = this._convertXPathToObject(xpath);
+    return datapath.source[datapath.leaf];
   }
 
   /*

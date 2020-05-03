@@ -265,4 +265,83 @@ describe('Inscriber Test', function() {
     inscriber.destruct('fullname'); // Incorrect name
     assert.notOk(compute.called);
   });
+
+  it('check inscriber allows multi-level property definition', function() {
+    let inscriber = new Inscriber();
+    inscriber.name = {
+      firstName: 'Sankar',
+      lastName: 'Ganesh'
+    };
+    let compute = function() {
+      return `${this.name.firstName} ${this.name.lastName}`;
+    };
+
+    inscriber.compute('name.fullName', ['name.firstName', 'name.lastName'], compute);
+    assert.equal(inscriber.name.fullName, 'Sankar Ganesh');
+    
+    inscriber.name.firstName = 'John';
+    inscriber.name.lastName = 'Doe';
+    assert.equal(inscriber.name.fullName, 'John Doe');
+
+    inscriber.name = {
+      firstName: 'John',
+      lastName: 'Doe'
+    };
+    assert.equal(inscriber.name.fullName, void 0);
+  });
+
+  it('check inscriber throws error for unknown property definition', function() {
+    let inscriber = new Inscriber();
+    inscriber.name = {
+      firstName: 'Sankar',
+      lastName: 'Ganesh',
+      address: {
+        street: 'park street',
+        city: 'chennai'
+      }
+    };
+    let compute = function() {
+      return `${this.name.firstName} ${this.name.lastName}`;
+    };
+
+    try {
+      inscriber.compute('name.fullName', ['namee.firstName', 'namee.lastName'], compute);
+    } catch(e) {
+      assert.equal(e, 'Error: namee not found');
+    }
+
+    try {
+      inscriber.compute('name.address.location', ['name.addresss.location', 'name.addresss.location'], compute);
+    } catch(e) {
+      assert.equal(e, 'Error: addresss not found');
+    }
+
+    try {
+      inscriber.compute('', [], compute);
+    } catch(e) {
+      assert.equal(e, 'Error: XPATH not found');
+    }
+  });
+
+  it('check inscriber getter & setter listens to binding properties', function() {
+    let inscriber = new Inscriber();
+    inscriber.name = {};
+
+    inscriber.set('name.firstName', 'John');
+    assert.equal(inscriber.get('name.firstName'), 'John');
+
+    inscriber.set('name.lastName', 'Doe');
+    assert.equal(inscriber.get('name.lastName'), 'Doe');
+
+    let compute = function() {
+      return `${this.name.firstName} ${this.name.lastName}`;
+    };
+    inscriber.compute('name.fullName', ['name.firstName', 'name.lastName'], compute);
+    assert.equal(inscriber.get('name.fullName'), 'John Doe');
+    assert.equal(inscriber.get('name.maiden'), void 0);
+    
+    inscriber.set('name.firstName', 'John');
+    inscriber.set('name.lastName', 'Mathews');
+    assert.equal(inscriber.name.fullName, 'John Mathews');
+  });
 });
